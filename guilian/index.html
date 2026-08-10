@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>人约黄昏 · A Date with the Ghost</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Noto+Serif+SC:wght@300;400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <!-- 雨/雪粒子层 -->
+  <!-- 顶部 UI -->
+  <header class="top-bar">
+    <div id="progress-dots" class="progress-dots" aria-label="进度">
+      <span class="dot" data-step="cover"></span>
+      <span class="dot" data-step="ch1"></span>
+      <span class="dot" data-step="ch2"></span>
+      <span class="dot" data-step="climax"></span>
+    </div>
+    <button id="mute-btn" class="mute-btn" aria-label="静音切换">
+      <span class="mute-icon">♪</span>
+    </button>
+  </header>
+
+  <!-- 主舞台 -->
+  <main id="stage" class="stage">
+    <!-- 通用黑屏遮罩 -->
+    <div id="black-mask" class="black-mask"></div>
+
+    <!-- 场景容器：JS 动态切换 display -->
+    <section id="scene-cover" class="scene scene-cover" data-active="true">
+      <div class="scene-bg bg-cover" aria-hidden="true"></div>
+      <div class="cover-content">
+        <h1 class="cover-title">
+          <span class="title-line">人</span>
+          <span class="title-line">约</span>
+          <span class="title-line">黄</span>
+          <span class="title-line">昏</span>
+        </h1>
+        <p class="cover-subtitle">A Date with the Ghost</p>
+        <p class="cover-tagline">有些相遇，是两个世界的人错走到了一起。</p>
+        <button class="btn-primary start-btn" data-action="start">开 始 值 夜</button>
+        <p class="cover-hint">建议佩戴耳机 · 全屏体验 · 约 8 分钟</p>
+      </div>
+    </section>
+
+    <section id="scene-opening" class="scene scene-opening">
+      <div class="scene-bg bg-city-night" aria-hidden="true"></div>
+      <div class="opening-narrator">
+        <p class="narrator-line" data-narrator="1">凌晨一点。</p>
+        <p class="narrator-line" data-narrator="2">你刚和出版社编辑吵了一架。</p>
+        <p class="narrator-line" data-narrator="3">他让你把小说改成"正能量"。</p>
+        <p class="narrator-line" data-narrator="4">你拒绝。然后你摔了咖啡馆的杯子。</p>
+        <p class="narrator-line" data-narrator="5">冷风吹进来。你拐进一家 24 小时便利店。</p>
+        <p class="narrator-line" data-narrator="6">货架之间，站着一位黑衣女子。</p>
+        <p class="narrator-line" data-narrator="7">她抬起眼睛，像是从很深的水底望向你。</p>
+        <p class="narrator-line" data-narrator="8">那一刻，你忘了自己是来买咖啡的。</p>
+      </div>
+      <div class="opening-character" id="opening-silhouette" aria-hidden="true"></div>
+      <button class="btn-primary opening-continue" data-action="opening-continue" hidden>继续</button>
+    </section>
+
+    <section id="scene-chapter1" class="scene scene-chapter1">
+      <div class="scene-bg bg-convenience-store" aria-hidden="true"></div>
+      <div class="chapter-marker">第一章 · 便利店</div>
+      <div class="character-stage" id="ch1-character"></div>
+      <div id="dialogue-box" class="dialogue-box">
+        <div class="speaker-line">
+          <span class="speaker-name" id="speaker-name">她</span>
+        </div>
+        <p class="dialogue-text" id="dialogue-text"></p>
+        <div class="option-list" id="option-list"></div>
+        <button class="btn-primary dialogue-continue" id="dialogue-continue" hidden>继续</button>
+      </div>
+    </section>
+
+    <section id="scene-chapter2" class="scene scene-chapter2">
+      <div class="scene-bg bg-old-apartment" aria-hidden="true"></div>
+      <div class="chapter-marker">第二章 · 老公寓</div>
+      <div class="character-stage" id="ch2-character"></div>
+      <div class="clock-puzzle" id="clock-puzzle" hidden>
+        <p class="puzzle-hint">点击墙上的照片，按时间顺序排列。</p>
+        <div class="photo-row">
+          <button class="photo-btn" data-photo="morning" data-order="1" aria-label="清晨照片"></button>
+          <button class="photo-btn" data-photo="dusk" data-order="2" aria-label="黄昏照片"></button>
+          <button class="photo-btn" data-photo="midnight" data-order="3" aria-label="深夜照片"></button>
+        </div>
+        <p class="puzzle-status" id="puzzle-status"></p>
+      </div>
+      <div id="dialogue-box-ch2" class="dialogue-box">
+        <div class="speaker-line">
+          <span class="speaker-name" id="speaker-name-ch2">她</span>
+        </div>
+        <p class="dialogue-text" id="dialogue-text-ch2"></p>
+        <div class="option-list" id="option-list-ch2"></div>
+        <button class="btn-primary dialogue-continue" id="dialogue-continue-ch2" hidden>继续</button>
+      </div>
+    </section>
+
+    <section id="scene-climax" class="scene scene-climax">
+      <div class="scene-bg bg-cathedral" aria-hidden="true"></div>
+      <div class="chapter-marker">高潮 · 教堂</div>
+      <div class="character-stage" id="climax-character"></div>
+      <div id="dialogue-box-climax" class="dialogue-box">
+        <div class="speaker-line">
+          <span class="speaker-name" id="speaker-name-climax">她</span>
+        </div>
+        <p class="dialogue-text" id="dialogue-text-climax"></p>
+        <div class="option-list" id="option-list-climax"></div>
+        <button class="btn-primary dialogue-continue" id="dialogue-continue-climax" hidden>继续</button>
+      </div>
+    </section>
+
+    <section id="scene-ending-a" class="scene scene-ending">
+      <div class="scene-bg bg-ending-a" aria-hidden="true"></div>
+      <div class="ending-content">
+        <h2 class="ending-title">结局 A · 还 魂</h2>
+        <p class="ending-text" id="ending-a-text"></p>
+        <button class="btn-secondary" data-action="back-to-title">回到封面</button>
+      </div>
+    </section>
+
+    <section id="scene-ending-b" class="scene scene-ending">
+      <div class="scene-bg bg-ending-b" aria-hidden="true"></div>
+      <div class="ending-content">
+        <h2 class="ending-title">结局 B · 入 鬼</h2>
+        <p class="ending-text" id="ending-b-text"></p>
+        <button class="btn-secondary" data-action="back-to-title">回到封面</button>
+      </div>
+    </section>
+
+    <section id="scene-ending-c" class="scene scene-ending">
+      <div class="scene-bg bg-ending-c" aria-hidden="true"></div>
+      <div class="ending-content">
+        <h2 class="ending-title">结局 C · 共 度</h2>
+        <p class="ending-text" id="ending-c-text"></p>
+        <button class="btn-secondary" data-action="back-to-title">回到封面</button>
+      </div>
+    </section>
+
+    <section id="scene-ending-h" class="scene scene-ending">
+      <div class="scene-bg bg-ending-b" aria-hidden="true"></div>
+      <div class="ending-content">
+        <h2 class="ending-title">隐藏结局 · 黄 粱</h2>
+        <p class="ending-text" id="ending-h-text"></p>
+        <button class="btn-secondary" data-action="back-to-title">回到封面</button>
+      </div>
+    </section>
+
+    <section id="scene-credits" class="scene scene-credits">
+      <div class="credits-content">
+        <p class="credits-line">献给所有曾想消失，也曾被找回的人。</p>
+        <p class="credits-line credits-unlocks" id="credits-unlocks"></p>
+        <button class="btn-secondary" data-action="restart">再 读 一 遍</button>
+      </div>
+    </section>
+  </main>
+
+  <script src="game.js"></script>
+</body>
+</html>

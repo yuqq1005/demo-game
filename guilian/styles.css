@@ -1,0 +1,833 @@
+/* ============================================
+   人约黄昏 · A Date with the Ghost
+   美术风格：Art Deco + 黑色电影
+   ============================================ */
+
+:root {
+  --night: #0a0e1a;
+  --night-deep: #050811;
+  --blue: #1a3a5c;
+  --blue-deep: #0d1f33;
+  --gold: #c9a961;
+  --gold-bright: #e8c878;
+  --ink: #1a1a1a;
+  --paper: #f4e9d4;
+  --paper-dim: #c9b993;
+  --blood: #8b2c2c;
+  --display-font: 'Playfair Display', 'Noto Serif SC', Georgia, serif;
+  --body-font: 'Noto Serif SC', 'Playfair Display', Georgia, serif;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body {
+  width: 100%;
+  height: 100%;
+  background: var(--night);
+  color: var(--paper);
+  font-family: var(--body-font);
+  overflow: hidden;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+body {
+  cursor: default;
+}
+
+/* ============================================
+   雨/雪粒子层
+   ============================================ */
+/* ============================================
+   顶栏
+   ============================================ */
+.top-bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 50;
+  padding: 20px 32px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  pointer-events: none;
+}
+
+.progress-dots {
+  display: flex;
+  gap: 12px;
+  pointer-events: auto;
+}
+
+.progress-dots .dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: rgba(201, 169, 97, 0.25);
+  border: 1px solid rgba(201, 169, 97, 0.4);
+  transition: all 0.4s ease;
+}
+
+.progress-dots .dot.active {
+  background: var(--gold);
+  box-shadow: 0 0 12px var(--gold);
+  transform: scale(1.3);
+}
+
+.progress-dots .dot.passed {
+  background: rgba(201, 169, 97, 0.6);
+}
+
+.mute-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: rgba(10, 14, 26, 0.6);
+  border: 1px solid rgba(201, 169, 97, 0.4);
+  color: var(--gold);
+  font-size: 16px;
+  cursor: pointer;
+  pointer-events: auto;
+  backdrop-filter: blur(8px);
+  transition: all 0.3s ease;
+}
+
+.mute-btn:hover {
+  border-color: var(--gold);
+  box-shadow: 0 0 12px rgba(201, 169, 97, 0.5);
+}
+
+.mute-btn.muted {
+  color: rgba(201, 169, 97, 0.4);
+}
+
+/* ============================================
+   舞台与场景
+   ============================================ */
+.stage {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  height: 100dvh;
+  overflow: hidden;
+}
+
+.scene {
+  position: absolute;
+  inset: 0;
+  display: none;
+  opacity: 0;
+  transition: opacity 0.6s ease;
+  overflow: hidden;
+}
+
+.scene[data-active="true"] {
+  display: flex;
+  opacity: 1;
+}
+
+/* ============================================
+   场景背景层：统一结构
+   background-image 层：真实图片（优先）
+   ::before 遮罩层：渐变暗角（保护文字可读性）
+   ============================================ */
+.scene-bg {
+  position: absolute;
+  inset: 0;
+  background-color: var(--night-deep);
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  z-index: 0;
+}
+
+/* 深色渐变遮罩 → ::before 层负责 */
+.scene-bg::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: linear-gradient(
+    180deg,
+    rgba(10, 14, 26, 0.25) 0%,
+    rgba(10, 14, 26, 0.65) 100%
+  );
+}
+
+/* ============================================
+   各场景背景
+   （不再使用 background 简写，统一用 background-image）
+   ============================================ */
+.bg-cover {
+  background-color: #0a0e1a;
+  background-image: url('assets/cover.jpg');
+}
+
+.bg-convenience-store {
+  background-color: #0d1f33;
+  background-image: url('assets/convenience_store.jpg');
+}
+
+.bg-city-night {
+  background-color: #0a0e1a;
+  background-image: url('assets/city_night.jpg');
+}
+
+.bg-old-apartment {
+  background-color: #1a0e08;
+  background-image: url('assets/old_apartment.jpg');
+}
+
+.bg-cathedral {
+  background-color: #0a0e1a;
+  background-image: url('assets/cathedral.jpg');
+}
+
+/* 结局场景 */
+.bg-ending-a {
+  background-color: #8b6f47;
+  background-image: url('assets/ending_a.jpg');
+}
+
+.bg-ending-b {
+  background-color: #050811;
+  background-image: url('assets/ending_b.jpg');
+}
+
+.bg-ending-c {
+  background-color: #2a1810;
+  background-image: url('assets/ending_c.jpg');
+}
+
+/* ============================================
+   场景 active 态：显示真实背景图
+   （JS 会给 .scene-bg 追加 .has-image 触发此态）
+   ============================================ */
+.scene-bg.has-image::before {
+  background: linear-gradient(
+    180deg,
+    rgba(10, 14, 26, 0.2) 0%,
+    rgba(10, 14, 26, 0.55) 100%
+  );
+}
+
+.scene-bg.has-image.bg-cover { background-image: url('assets/cover.jpg'); }
+.scene-bg.has-image.bg-convenience-store { background-image: url('assets/convenience_store.jpg'); }
+.scene-bg.has-image.bg-old-apartment { background-image: url('assets/old_apartment.jpg'); }
+.scene-bg.has-image.bg-city-night { background-image: url('assets/city_night.jpg'); }
+.scene-bg.has-image.bg-cathedral { background-image: url('assets/cathedral.jpg'); }
+.scene-bg.has-image.bg-ending-a { background-image: url('assets/ending_a.jpg'); }
+.scene-bg.has-image.bg-ending-b { background-image: url('assets/ending_b.jpg'); }
+.scene-bg.has-image.bg-ending-c { background-image: url('assets/ending_c.jpg'); }
+
+/* ============================================
+   封面
+   ============================================ */
+.scene-cover {
+  align-items: center;
+  justify-content: center;
+}
+
+.cover-content {
+  position: relative;
+  z-index: 2;
+  text-align: center;
+  padding: 24px;
+  max-width: 720px;
+}
+
+.cover-title {
+  font-family: var(--display-font);
+  font-weight: 600;
+  font-size: clamp(48px, 10vw, 96px);
+  letter-spacing: 0.3em;
+  margin-bottom: 32px;
+  color: var(--paper);
+  text-shadow: 0 0 24px rgba(201, 169, 97, 0.4);
+  display: flex;
+  justify-content: center;
+  gap: 0.2em;
+}
+
+.cover-title .title-line {
+  display: inline-block;
+  opacity: 0;
+  transform: translateY(20px) rotateX(-90deg);
+  animation: title-reveal 1.2s ease forwards;
+}
+
+.cover-title .title-line:nth-child(1) { animation-delay: 0.3s; }
+.cover-title .title-line:nth-child(2) { animation-delay: 0.6s; }
+.cover-title .title-line:nth-child(3) { animation-delay: 0.9s; }
+.cover-title .title-line:nth-child(4) { animation-delay: 1.2s; }
+
+@keyframes title-reveal {
+  to {
+    opacity: 1;
+    transform: translateY(0) rotateX(0);
+  }
+}
+
+.cover-subtitle {
+  font-family: var(--display-font);
+  font-style: italic;
+  font-size: clamp(14px, 2vw, 18px);
+  letter-spacing: 0.4em;
+  color: var(--gold);
+  margin-bottom: 48px;
+  opacity: 0;
+  animation: fade-in 1s ease 1.8s forwards;
+}
+
+.cover-tagline {
+  font-size: clamp(14px, 1.6vw, 16px);
+  color: var(--paper-dim);
+  margin-bottom: 56px;
+  letter-spacing: 0.1em;
+  opacity: 0;
+  animation: fade-in 1s ease 2.2s forwards;
+}
+
+.cover-hint {
+  font-size: 12px;
+  color: rgba(201, 169, 97, 0.5);
+  letter-spacing: 0.3em;
+  margin-top: 32px;
+  opacity: 0;
+  animation: fade-in 1s ease 2.8s forwards;
+}
+
+.start-btn {
+  opacity: 0;
+  animation: fade-in 1s ease 2.5s forwards;
+}
+
+@keyframes fade-in {
+  to { opacity: 1; }
+}
+
+/* ============================================
+   按钮
+   ============================================ */
+.btn-primary,
+.btn-secondary {
+  font-family: var(--body-font);
+  font-size: 14px;
+  letter-spacing: 0.4em;
+  padding: 14px 36px;
+  border: 1px solid var(--gold);
+  background: rgba(10, 14, 26, 0.6);
+  color: var(--gold);
+  cursor: pointer;
+  transition: all 0.4s ease;
+  backdrop-filter: blur(8px);
+  text-transform: none;
+}
+
+.btn-primary:hover,
+.btn-secondary:hover {
+  background: var(--gold);
+  color: var(--night);
+  box-shadow: 0 0 24px rgba(201, 169, 97, 0.6);
+  letter-spacing: 0.5em;
+}
+
+.btn-primary:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+  letter-spacing: 0.4em;
+}
+
+.btn-primary:disabled:hover {
+  background: rgba(10, 14, 26, 0.6);
+  color: var(--gold);
+  box-shadow: none;
+  letter-spacing: 0.4em;
+}
+
+/* ============================================
+   开场（叙述文字 + 剪影）
+   ============================================ */
+.scene-opening {
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+}
+
+.opening-narrator {
+  position: relative;
+  z-index: 2;
+  text-align: center;
+  max-width: 600px;
+  padding: 0 24px;
+}
+
+.narrator-line {
+  font-size: clamp(16px, 2vw, 20px);
+  line-height: 2;
+  color: var(--paper);
+  margin-bottom: 8px;
+  opacity: 0;
+  transform: translateY(10px);
+  transition: opacity 0.8s ease, transform 0.8s ease;
+}
+
+.narrator-line.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.opening-character {
+  position: absolute;
+  right: 8%;
+  bottom: 8%;
+  width: 340px;
+  height: 680px;
+  background-image: url('assets/her_silhouette.jpg');
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center bottom;
+  background-color: transparent;
+  mix-blend-mode: screen; /* 黑底变透明，只留白色轮廓 */
+  opacity: 0;
+  transition: opacity 1.2s ease 2s;
+}
+
+.opening-character.visible { opacity: 1; }
+
+.opening-continue {
+  position: relative;
+  z-index: 3;
+  margin-top: 48px;
+}
+
+/* ============================================
+   章节场景通用
+   ============================================ */
+.scene-chapter1,
+.scene-chapter2,
+.scene-climax {
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  padding-bottom: 8vh;
+}
+
+.chapter-marker {
+  position: absolute;
+  top: 80px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-family: var(--display-font);
+  font-style: italic;
+  font-size: 13px;
+  letter-spacing: 0.6em;
+  color: var(--gold);
+  z-index: 2;
+  opacity: 0.8;
+}
+
+.character-stage {
+  position: absolute;
+  right: 4%;
+  bottom: 10%;
+  width: 440px;
+  height: 880px;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.character-stage.silhouette {
+  background-image: url('assets/her_silhouette.jpg');
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center bottom;
+}
+
+.character-stage.face {
+  background-image: url('assets/her_face.jpg');
+  background-size: cover;
+  background-position: center;
+  box-shadow: -60px 0 120px rgba(10, 14, 26, 0.75);
+}
+
+/* ============================================
+   对话框（极透明 · 幽灵质感）
+   ============================================ */
+.dialogue-box {
+  position: relative;
+  z-index: 3;
+  width: min(680px, 92vw);
+  /* 极低透明度 + 模糊，背景图若隐若现 */
+  background: rgba(8, 10, 18, 0.52);
+  border: 1px solid rgba(201, 169, 97, 0.22);
+  /* 顶部/底部极细金色装饰线，Art Deco 感 */
+  box-shadow:
+    0 0 0 1px rgba(201, 169, 97, 0.08),
+    0 0 80px rgba(0, 0, 0, 0.45),
+    inset 0 1px 0 rgba(201, 169, 97, 0.12),
+    inset 0 -1px 0 rgba(201, 169, 97, 0.06);
+  backdrop-filter: blur(18px) saturate(1.4);
+  /* 内边距收紧，文字更紧凑 */
+  padding: 28px 32px 24px;
+  /* 左上角装饰三角（Art Deco 几何感） */
+  position: relative;
+}
+
+.dialogue-box::before {
+  content: '';
+  position: absolute;
+  top: -1px;
+  left: -1px;
+  width: 24px;
+  height: 24px;
+  /* 金色三角装饰 */
+  border-top: 1px solid rgba(201, 169, 97, 0.5);
+  border-left: 1px solid rgba(201, 169, 97, 0.5);
+  pointer-events: none;
+}
+
+.dialogue-box::after {
+  content: '';
+  position: absolute;
+  bottom: -1px;
+  right: -1px;
+  width: 24px;
+  height: 24px;
+  /* 金色三角装饰（右下对称） */
+  border-bottom: 1px solid rgba(201, 169, 97, 0.5);
+  border-right: 1px solid rgba(201, 169, 97, 0.5);
+  pointer-events: none;
+}
+
+.speaker-line {
+  margin-bottom: 10px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid rgba(201, 169, 97, 0.15);
+}
+
+.speaker-name {
+  font-family: var(--display-font);
+  font-style: italic;
+  font-size: 13px;
+  letter-spacing: 0.35em;
+  color: var(--gold);
+  /* 字间距拉开，轻盈感 */
+  opacity: 0.9;
+}
+
+.dialogue-text {
+  font-size: clamp(15px, 1.7vw, 17px);
+  line-height: 1.95;
+  color: rgba(244, 233, 212, 0.88);
+  letter-spacing: 0.04em;
+  min-height: 48px;
+  margin-bottom: 20px;
+  /* 字间距略松，有文学感 */
+}
+
+.dialogue-text.typing {
+  border-right: 1px solid var(--gold);
+  animation: cursor-blink 0.8s step-end infinite;
+}
+
+@keyframes cursor-blink {
+  50% { border-color: transparent; }
+}
+
+.option-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 14px;
+}
+
+.option-btn {
+  font-family: var(--body-font);
+  font-size: 14px;
+  line-height: 1.65;
+  padding: 12px 18px;
+  background: rgba(26, 58, 92, 0.18);
+  border: 1px solid rgba(201, 169, 97, 0.18);
+  color: rgba(244, 233, 212, 0.82);
+  text-align: left;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  letter-spacing: 0.04em;
+}
+
+.option-btn:hover {
+  background: rgba(201, 169, 97, 0.12);
+  border-color: rgba(201, 169, 97, 0.55);
+  padding-left: 26px;
+  color: var(--gold-bright);
+  /* hover 时轻微发光，像萤火虫 */
+  box-shadow: 0 0 12px rgba(201, 169, 97, 0.15);
+}
+
+.option-btn::before {
+  content: '· ';
+  color: var(--gold);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.option-btn:hover::before { opacity: 1; }
+
+.option-btn.locked {
+  opacity: 0.28;
+  cursor: not-allowed;
+}
+
+.option-btn.locked:hover {
+  background: rgba(26, 58, 92, 0.18);
+  border-color: rgba(201, 169, 97, 0.18);
+  padding-left: 18px;
+  color: rgba(244, 233, 212, 0.5);
+  box-shadow: none;
+}
+
+.dialogue-continue {
+  margin-top: 14px;
+  width: 100%;
+}
+
+/* ============================================
+   第二章：时钟谜题
+   ============================================ */
+.clock-puzzle {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 4;
+  text-align: center;
+  background: rgba(10, 14, 26, 0.92);
+  padding: 32px 40px;
+  border: 1px solid rgba(201, 169, 97, 0.3);
+  backdrop-filter: blur(12px);
+}
+
+.puzzle-hint {
+  font-size: 14px;
+  color: var(--gold);
+  letter-spacing: 0.2em;
+  margin-bottom: 24px;
+}
+
+.photo-row {
+  display: flex;
+  gap: 16px;
+  justify-content: center;
+  margin-bottom: 16px;
+}
+
+.photo-btn {
+  width: 80px;
+  height: 100px;
+  border: 1px solid rgba(201, 169, 97, 0.4);
+  background: rgba(26, 58, 92, 0.4);
+  cursor: pointer;
+  position: relative;
+  transition: all 0.3s ease;
+  background-size: cover;
+  background-position: center;
+}
+
+.photo-btn[data-photo="morning"] {
+  background: linear-gradient(180deg, #d4a574 0%, #8b6f47 100%);
+}
+.photo-btn[data-photo="dusk"] {
+  background: linear-gradient(180deg, #8b2c2c 0%, #2a1810 100%);
+}
+.photo-btn[data-photo="midnight"] {
+  background: linear-gradient(180deg, #0a0e1a 0%, #050811 100%);
+}
+
+.photo-btn:hover {
+  border-color: var(--gold);
+  transform: translateY(-4px);
+}
+
+.photo-btn.selected {
+  border-color: var(--gold);
+  box-shadow: 0 0 16px rgba(201, 169, 97, 0.6);
+}
+
+.photo-btn::after {
+  content: attr(data-photo);
+  position: absolute;
+  bottom: 4px;
+  left: 0;
+  right: 0;
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  color: var(--paper);
+  text-align: center;
+  text-shadow: 0 0 4px black;
+}
+
+.photo-btn[data-photo="morning"]::after { content: '清晨'; }
+.photo-btn[data-photo="dusk"]::after { content: '黄昏'; }
+.photo-btn[data-photo="midnight"]::after { content: '深夜'; }
+
+.puzzle-status {
+  font-size: 13px;
+  color: var(--paper-dim);
+  letter-spacing: 0.2em;
+  min-height: 20px;
+}
+
+.puzzle-status.success {
+  color: var(--gold-bright);
+}
+
+/* ============================================
+   结局
+   ============================================ */
+.scene-ending {
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+}
+
+.ending-content {
+  position: relative;
+  z-index: 2;
+  text-align: center;
+  max-width: 640px;
+  padding: 0 24px;
+}
+
+.ending-title {
+  font-family: var(--display-font);
+  font-size: clamp(36px, 6vw, 56px);
+  letter-spacing: 0.4em;
+  margin-bottom: 48px;
+  color: var(--paper);
+  text-shadow: 0 0 24px rgba(201, 169, 97, 0.5);
+}
+
+.ending-text {
+  font-size: clamp(16px, 1.8vw, 18px);
+  line-height: 2.2;
+  color: var(--paper);
+  letter-spacing: 0.1em;
+  margin-bottom: 56px;
+  min-height: 100px;
+}
+
+/* ============================================
+   片尾
+   ============================================ */
+.scene-credits {
+  align-items: center;
+  justify-content: center;
+}
+
+.credits-content {
+  text-align: center;
+  max-width: 600px;
+  padding: 0 24px;
+}
+
+.credits-line {
+  font-size: clamp(16px, 1.8vw, 18px);
+  color: var(--paper);
+  margin-bottom: 32px;
+  line-height: 1.8;
+  letter-spacing: 0.1em;
+}
+
+.credits-meta {
+  font-size: 13px;
+  color: var(--paper-dim);
+  letter-spacing: 0.2em;
+  margin-bottom: 32px;
+}
+
+.credits-unlocks {
+  font-size: 13px;
+  color: var(--gold);
+  letter-spacing: 0.3em;
+  margin-bottom: 48px;
+}
+
+/* ============================================
+   黑屏遮罩（场景切换过渡）
+   ============================================ */
+.black-mask {
+  position: absolute;
+  inset: 0;
+  background: var(--night-deep);
+  z-index: 200;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.5s ease;
+}
+
+.black-mask.active {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* ============================================
+   响应式（移动端）
+   ============================================ */
+@media (max-width: 768px) {
+  .top-bar {
+    padding: 16px 20px;
+  }
+
+  .progress-dots { gap: 8px; }
+  .progress-dots .dot { width: 6px; height: 6px; }
+
+  .character-stage {
+    right: 3%;
+    width: 280px;
+    height: 560px;
+    bottom: 12%;
+  }
+
+  .chapter-marker {
+    top: 60px;
+    font-size: 11px;
+    letter-spacing: 0.4em;
+  }
+
+  .dialogue-box {
+    padding: 24px 20px;
+  }
+
+  .scene-chapter1,
+  .scene-chapter2,
+  .scene-climax {
+    padding-bottom: 4vh;
+  }
+
+  .clock-puzzle {
+    width: 92vw;
+    padding: 24px 16px;
+  }
+
+  .photo-btn {
+    width: 60px;
+    height: 80px;
+  }
+}
+
+/* ============================================
+   工具类
+   ============================================ */
+[hidden] {
+  display: none !important;
+}
+
+.fade-in {
+  animation: fade-in 1s ease forwards;
+}
