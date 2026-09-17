@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>未编目之书 · The Uncatalogued Book</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Noto+Serif+SC:wght@300;400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div id="app">
+    <header class="hud">
+      <div id="stars" class="stars" aria-label="通关标记"></div>
+      <button id="btn-reset" class="ghost-btn" type="button" title="清除存档">重置</button>
+    </header>
+
+    <!-- 标题 -->
+    <section id="scene-title" class="scene active" data-scene="title">
+      <div class="scene-bg" data-img="library_overview.jpg"></div>
+      <div class="title-panel">
+        <p class="title-en">The Uncatalogued Book</p>
+        <h1 class="title-zh">未编目之书</h1>
+        <p class="title-tag">沃斯家族私人夜图书馆 · 1928</p>
+        <p class="title-line">地下二层藏着一本书，它已经等候了一百年。</p>
+        <button id="btn-start" class="primary-btn" type="button">开始值夜</button>
+        <p class="title-hint">约 8–12 分钟 · 找物 · 无终局选项</p>
+      </div>
+    </section>
+
+    <!-- 一楼 -->
+    <section id="scene-floor1" class="scene" data-scene="floor1">
+      <div class="scene-bg" data-img="floor1_hall.jpg"></div>
+      <div class="hotspots" id="floor1-hotspots">
+        <button class="hotspot" data-id="lamp" style="left:58%;top:42%" type="button" aria-label="煤油灯">灯</button>
+        <button class="hotspot locked" data-id="drawer" style="left:52%;top:58%" type="button" aria-label="值班桌抽屉">抽屉</button>
+        <button class="hotspot" data-id="shelf" style="left:18%;top:40%" type="button" aria-label="书架">书架</button>
+        <button class="hotspot" data-id="cart" style="left:78%;top:62%" type="button" aria-label="还书车">还书车</button>
+        <button class="hotspot" data-id="cards" style="left:44%;top:52%" type="button" aria-label="借阅卡片盒">卡片</button>
+        <button class="hotspot" data-id="memo" style="left:62%;top:54%" type="button" aria-label="便签">便签</button>
+        <button class="hotspot" data-id="ink" style="left:48%;top:48%" type="button" aria-label="墨水瓶">墨水</button>
+        <button class="hotspot" data-id="photo" style="left:36%;top:56%" type="button" aria-label="旧相纸">相纸</button>
+        <button class="hotspot locked" data-id="door" style="left:88%;top:45%" type="button" aria-label="地下室门">门</button>
+      </div>
+      <p class="scene-caption" id="floor1-caption">夜馆空无一人。先点亮煤油灯。</p>
+    </section>
+
+    <!-- 地下书室 -->
+    <section id="scene-b2" class="scene" data-scene="b2">
+      <div class="scene-bg cold" data-img="b2_vault_room.jpg"></div>
+      <div class="vault-stage">
+        <div class="book-pedestal" id="blank-book" data-img="blank_book.jpg" title="未编目之书">
+          <span class="book-label">《未编目之书》</span>
+        </div>
+        <div class="drop-slots" id="b2-slots">
+          <div class="drop-slot" data-slot="key">门 · 放钥匙</div>
+          <div class="drop-slot" data-slot="note">笔 · 放残页</div>
+          <div class="drop-slot" data-slot="flower">脊 · 放干花</div>
+        </div>
+      </div>
+      <p class="scene-caption" id="b2-caption">把三件信物放到书上。</p>
+    </section>
+
+    <!-- 书页内 -->
+    <section id="scene-book" class="scene" data-scene="bookInner">
+      <div class="scene-bg parchment" data-img="book_inner.jpg"></div>
+      <div class="silhouette" id="silhouette" hidden data-img="girl_silhouette.jpg"></div>
+      <div class="book-slots" id="book-slots">
+        <div class="drop-slot page-slot" data-slot="key">插图【门】</div>
+        <div class="drop-slot page-slot" data-slot="note">插图【鹅毛笔】</div>
+        <div class="drop-slot page-slot" data-slot="flower">插图【少女】</div>
+      </div>
+      <div class="monologue" id="monologue" hidden>
+        <p id="mono-text"></p>
+        <button id="btn-mono-next" class="primary-btn" type="button">……</button>
+      </div>
+      <button id="btn-last-page" class="primary-btn last-page-btn" type="button" hidden>最后一页</button>
+      <p class="scene-caption" id="book-caption">将信物与插图一一对照。</p>
+    </section>
+
+    <!-- 结局 -->
+    <section id="scene-ending" class="scene" data-scene="ending">
+      <div class="scene-bg" id="ending-bg"></div>
+      <div class="ending-panel">
+        <h2 id="ending-title"></h2>
+        <p id="ending-body"></p>
+        <p id="ending-epilogue" class="epilogue"></p>
+        <button id="btn-title" class="primary-btn" type="button">返回标题</button>
+      </div>
+    </section>
+
+    <!-- 背包 -->
+    <aside id="inventory" class="inventory" hidden>
+      <p class="inv-label">信物</p>
+      <div id="inv-items" class="inv-items"></div>
+    </aside>
+
+    <!-- 详情弹窗 -->
+    <div id="modal" class="modal" hidden>
+      <div class="modal-card">
+        <div class="modal-art" id="modal-art"></div>
+        <h3 id="modal-title"></h3>
+        <p id="modal-body"></p>
+        <button id="modal-close" class="primary-btn" type="button">合上</button>
+      </div>
+    </div>
+
+    <!-- 旁白条 -->
+    <div id="toast" class="toast" hidden></div>
+  </div>
+  <script src="game.js"></script>
+</body>
+</html>
