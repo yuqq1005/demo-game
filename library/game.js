@@ -91,8 +91,12 @@
   const $$ = (sel) => [...document.querySelectorAll(sel)];
 
   const BGM_SRC = "music/" + encodeURIComponent("Fabrizio Paterlini - Empty Room.mp3");
+  const CLICK_SFX_SRC = "music/action.mp3";
+  const BGM_VOLUME = 0.4;
+  const CLICK_SFX_VOLUME = 0.18;
   let bgm = null;
   let bgmMuted = false;
+  let clickSfx = null;
 
   function syncMusicBtn() {
     const btn = $("#btn-music");
@@ -107,7 +111,7 @@
     if (!bgm) {
       bgm = new Audio(BGM_SRC);
       bgm.loop = true;
-      bgm.volume = 0.4;
+      bgm.volume = BGM_VOLUME;
     }
     if (bgmMuted) {
       syncMusicBtn();
@@ -130,6 +134,18 @@
       if (p && typeof p.catch === "function") p.catch(() => {});
     }
     syncMusicBtn();
+  }
+
+  function playClickSfx() {
+    if (!clickSfx) {
+      clickSfx = new Audio(CLICK_SFX_SRC);
+      clickSfx.volume = CLICK_SFX_VOLUME;
+      clickSfx.preload = "auto";
+    }
+    const shot = clickSfx.cloneNode();
+    shot.volume = CLICK_SFX_VOLUME;
+    const p = shot.play();
+    if (p && typeof p.catch === "function") p.catch(() => {});
   }
 
   function secretsFound() {
@@ -718,6 +734,16 @@
   }
 
   function bind() {
+    document.addEventListener(
+      "click",
+      (e) => {
+        const btn = e.target.closest("button");
+        if (!btn || !btn.closest(".title-plate, .dialogue, .monologue")) return;
+        playClickSfx();
+      },
+      true
+    );
+
     $("#btn-start").addEventListener("click", newGame);
     $("#btn-music").addEventListener("click", toggleBgm);
     $("#btn-intro-next").addEventListener("click", () => {

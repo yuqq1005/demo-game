@@ -977,22 +977,28 @@ body {
 
 .monologue {
   position: absolute;
+  z-index: 20;
   left: 50%;
-  bottom: 22%;
+  bottom: 18%;
   transform: translateX(-50%);
-  width: min(520px, 92%);
-  padding: 1.25rem 1.4rem;
-  background: var(--soot);
-  border: var(--frame);
-  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--brass-dim) 35%, transparent);
+  width: min(38rem, calc(100% - 2rem));
+  padding: 1.55rem 2rem 1.15rem;
+  background: var(--ui-dialogue) center / 100% 100% no-repeat;
+  border: none;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.45);
   text-align: center;
 }
 
 .monologue p {
-  margin: 0 0 1.1rem;
+  margin: 0 0 0.85rem;
+  padding: 0.15rem 1.35rem 0;
   line-height: 1.85;
   font-size: 0.95rem;
-  color: var(--parchment);
+  color: #2a1f14;
+}
+
+.monologue .primary-btn {
+  margin-bottom: 0.2rem;
 }
 
 .last-page-btn {
