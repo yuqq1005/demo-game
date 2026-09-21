@@ -1,75 +1,147 @@
-(() => {
+/**
+ * Builds library/game.js with readable UTF-8 Chinese strings.
+ * Run: node _build_game.mjs
+ */
+import fs from "fs";
+import path from "path";
+import { fileURLToPath } from "url";
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const u = (s) =>
+  [...s]
+    .map((ch) => {
+      if (ch === "\n") return "\\n";
+      if (ch === "\r") return "";
+      if (ch === '"') return '\\"';
+      if (ch === "\\") return "\\\\";
+      return ch;
+    })
+    .join("");
+
+const L = {
+  keyName: u("黄铜蜡封钥匙"),
+  keyTip: u("封着家族蜡印的钥匙。"),
+  noteName: u("批注残页"),
+  noteTip: u("夹在《图书馆管理学》里的手写残页。"),
+  flowerName: u("野榆干花书签"),
+  flowerTip: u("她生前喜爱的花。"),
+  memoTitle: u("馆长手写便签"),
+  memoBody: u(
+    "字迹微微发抖：\n\nDo not read the final page.\n不要阅读最后一页。\n\n他怕你把她读回删除队列；也怕你看见他的罪。祖训只教「别写活人」，没教「写错了怎么拆」。"
+  ),
+  cardsTitle: u("手写借阅卡（两张）"),
+  cardsBody: u(
+    "伊洛恩·沃斯：借阅记录停在失踪当日，姓名正在褪色。——待删除。\n\n沃斯夫人：姓名栏完全空白。配偶栏仅写着 Voss。\n老馆员只记得：馆长曾经有过一位夫人。"
+  ),
+  inkTitle: u("干涸墨水瓶"),
+  inkBody: u(
+    "鹅毛笔斜靠在瓶侧。瓶口的墨早已干裂成黑痂。\n\n《未编目之书》本应收藏残响。有人用它写下活人的名字——把待删除，冻成暂存。"
+  ),
+  photoTitle: u("撕裂的银盐旧相纸"),
+  photoBody: u(
+    "女人的面部被撕掉了。只剩裙角一角。\n\n已抹除：删除走完，连残响都没进空白书。没有名字可召回。"
+  ),
+  brKey: u(
+    "地下入口来自那场违训仪式。\n\n家族祖训：绝不主动把活人写进《未编目之书》。\n编目即存在——写进去的人，出不来。\n\n他把钥匙蜡封，是把出口也封进了自己不敢碰的地方。"
+  ),
+  brNote: u(
+    "她为查母亲，读了禁区里改条目的书。编目开始清除她：同事记不清她的脸，借阅卡上的名字褪色。\n\n父亲用干墨，把「伊洛恩·沃斯」写进空白古书——他以为这样能把她从删除队列挪到暂存。\n活人不该被写成条目。她被冻在容器里。"
+  ),
+  brFlower: u(
+    "野榆是她生前最爱的花。仪式里，它钉在书脊，当作「她是谁」的锚。\n\n他以为自己是在救我。\n可我只是……再也走不出去。"
+  ),
+  mono: [
+    u("十年了。外面的人只记得：馆长的女儿失踪了。他们不记得我的脸，也不记得我的名字该怎么念。"),
+    u("我是伊洛恩·沃斯。夜班助手。我本该巡灯、还书、核对手写卡片——不是变成书页里的人。"),
+    u("母亲几乎从馆史里抹干净了。卡片上只剩配偶栏的 Voss。老雇员说：馆长曾经有过一位夫人。再无其余。"),
+    u("她早年整理禁区时误触改条目的书。父亲畏惧祖训，不敢动用空白古书。删除走完——连残响都没有。彻底的「已抹除」。"),
+    u("我想把她读回来。于是我潜入禁区，读那些可以改写条目的典籍。读得太深之后，轮到我自己变成「待删除」。"),
+    u("请假和药物挡不住遗忘。同事开始叫不出我的名字。借阅卡上，墨迹像受潮一样淡下去。"),
+    u("父亲亲眼见过犹豫如何毁掉一个人。这一次他走向另一端：用干墨把我的全名写进《未编目之书》，用野榆钉住书脊，用蜡封钥匙锁死地下。"),
+    u("他把「待删除」冻成「暂存」。删除令只是挂起，并未取消。我没有同意。这是父爱的暴力——用制度替我决定存在方式。"),
+    u("馆规硬性约束：写入者读不出自己写进去的人。他回看，只看见自己的笔迹。出口只能交给外人。"),
+    u("所以他把钥匙、残页、干花拆开，散在一楼，把这一夜交给你。便签上写着「不要阅读最后一页」——他真心害怕，也真心不敢补救。"),
+    u("最后一页不是毁灭。合格的完整见证，可以重编条目，作废旧删除令。母亲已经没有残响，召不回来。我还有。"),
+    u("他以为自己是在救我。可我只是……再也走不出去。今夜，请你读完。或者合上。"),
+  ],
+  intro: [
+    {
+      speaker: u("值夜规程"),
+      text: u(
+        "你是今夜的值夜人。\n\n工作很简单：巡视一楼灯火，核对还书车，确保手写借阅卡不乱，黎明前把门窗关好。\n这座馆对外面向学者，对内只认编目——被目录承认的，才稳定地活在世上。"
+      ),
+      bg: "library_overview.png",
+      curator: "off",
+    },
+    {
+      speaker: u("你"),
+      text: u("雾气贴着橡木窗。煤油灯还没点齐。馆长约你在大厅见面，说有几句交代。"),
+      bg: "library_overview.png",
+      curator: "off",
+    },
+    {
+      speaker: u("沃斯馆长"),
+      text: u(
+        "……今夜由你值守。一楼的灯、抽屉、卡片盒，照旧巡一遍。\n我的女儿——外界只说她失踪了十年。你不必打听。馆里的人也不记得清楚。"
+      ),
+      bg: "floor1_hall.png",
+      curator: "on",
+    },
+    {
+      speaker: u("沃斯馆长"),
+      text: u(
+        "地下二层藏着一本书。它已经等候了一百年。\n钥匙我拆开了。有些东西，不该由我亲手再碰。\n便签上的话，听或不听，随你。"
+      ),
+      bg: "floor1_hall.png",
+      curator: "on",
+    },
+    {
+      speaker: u("旁白"),
+      text: u(
+        "他戴上帽子，没有回头。大门在雾里合上。\n\n值夜开始。你可以先在值班桌点灯，也可以去阅览廊与还书廊四处看看。"
+      ),
+      bg: "floor1_hall.png",
+      curator: "leaving",
+    },
+  ],
+};
+
+const out = `(() => {
   const STORAGE = {
     cleared: "voss_library_cleared",
     trueEnding: "voss_library_true",
   };
 
   const ITEMS = {
-    smallkey: { id: "smallkey", name: "小钥匙", img: "prop_small_key.png", tip: "一枚发暗的小钥匙。" },
-    key: { id: "key", name: "黄铜蜡封钥匙", img: "prop_key.png", tip: "封着家族蜡印的钥匙。" },
-    card: { id: "card", name: "伊洛恩的借阅卡", img: "prop_card.png", tip: "姓名在褪。索书号还在：B-17。" },
-    note: { id: "note", name: "批注残页", img: "prop_note.png", tip: "夹在《图书馆管理学》里的手写残页。" },
-    flower: { id: "flower", name: "野榆干花书签", img: "prop_flower.png", tip: "她生前喜爱的花。" },
+    key: { id: "key", name: "${L.keyName}", img: "prop_key.png", tip: "${L.keyTip}" },
+    note: { id: "note", name: "${L.noteName}", img: "prop_note.png", tip: "${L.noteTip}" },
+    flower: { id: "flower", name: "${L.flowerName}", img: "prop_flower.png", tip: "${L.flowerTip}" },
   };
 
   const SECRETS = {
-    memo: {
-      id: "memo",
-      title: "馆长手写便签",
-      img: "prop_memo.png",
-      body:
-        "字迹微微发抖：\n\nDo not read the final page.\n不要阅读最后一页。\n\n他怕你把她读回来；也怕你看见他的罪。祖训只教「别写活人」，没教写错了怎么拆。",
-    },
-    cards: {
-      id: "cards",
-      title: "手写借阅卡（两张）",
-      img: "prop_card.png",
-      body:
-        "伊洛恩·沃斯：借阅停在失踪当日，姓名正在褪色。索书号栏写着 B-17。旁注：待删除。\n\n沃斯夫人：姓名栏空白。配偶栏只有 Voss。\n老馆员只记得：馆长曾经有过一位夫人。",
-    },
-    ink: {
-      id: "ink",
-      title: "干涸墨水瓶",
-      img: "prop_ink.png",
-      body:
-        "鹅毛笔斜靠在瓶侧。瓶口的墨早已干裂成黑痂。\n\n《未编目之书》本应收藏残响。有人用它写下活人的名字，把「待删除」冻成「暂存」。",
-    },
-    photo: {
-      id: "photo",
-      title: "撕裂的银盐旧相纸",
-      img: "prop_photo.png",
-      body:
-        "女人的面部被撕掉了。只剩裙角一角。\n\n已抹除：删除走完，连残响都没进空白书。没有名字可召回。",
-    },
+    memo: { id: "memo", title: "${L.memoTitle}", img: "prop_memo.png", body: "${L.memoBody}" },
+    cards: { id: "cards", title: "${L.cardsTitle}", img: "prop_card.png", body: "${L.cardsBody}" },
+    ink: { id: "ink", title: "${L.inkTitle}", img: "prop_ink.png", body: "${L.inkBody}" },
+    photo: { id: "photo", title: "${L.photoTitle}", img: "prop_photo.png", body: "${L.photoBody}" },
   };
 
   const BOOK_REVEALS = {
-    key: "地下入口是那场违训仪式留下的。\n\n祖训写得很死：活人，不准主动写进《未编目之书》。\n写进去的人出不来。在这座馆里，进了目录，才算还在。\n\n他把钥匙蜡封起来，等于把出口也藏进了自己不敢再碰的地方。",
-    note: "她去查母亲，翻了禁区里改条目的书。编目开始清她：同事对不上她的脸，借阅卡上的名字一天淡似一天。\n\n父亲用干墨写下「伊洛恩·沃斯」，写进那本空白古书。他以为这样能把她从「待删除」挪到「暂存」。\n活人不该被写成条目。她被冻在书里了。",
-    flower: "野榆是她生前最爱的花。仪式里钉在书脊上，用来钉住「她是谁」。\n\n他以为自己在救我。\n可我只是……再也走不出去。",
+    key: "${L.brKey}",
+    note: "${L.brNote}",
+    flower: "${L.brFlower}",
   };
 
   const MONOLOGUE = [
-    "十年了。外面的人只记得馆长的女儿失踪了。他们不记得我的脸，也不记得我的名字该怎么念。",
-    "我是伊洛恩·沃斯。夜班助手。巡灯，还书，核对手写卡片。不该变成书页里的人。",
-    "母亲差不多从馆史里被抹干净了。卡片上只剩配偶栏的 Voss。老馆员说：馆长曾经有过一位夫人。别的，没有。",
-    "她早年整理禁区，误触了改条目的书。父亲怕祖训，不敢动空白古书。删除走完，连残响都没有。彻底的「已抹除」。",
-    "我想把她读回来。我潜入禁区，去读那些能改写条目的书。读太深了。轮到我自己变成「待删除」。",
-    "请假没用，药也没用。同事开始叫不出我的名字。借阅卡上的墨，像受了潮，一点点淡下去。",
-    "父亲见过犹豫怎样毁一个人。这一次他选了另一头：干墨写下我的全名，写进《未编目之书》；野榆钉住书脊；蜡封钥匙锁死地下。",
-    "他把「待删除」冻成「暂存」。删除令只是挂起，并没有取消。我没有同意。他用馆规替我选了活法。",
-    "馆规写死了：写入者读不出自己写进去的人。他回看，只能看见自己的笔迹。出口只能交给外人。",
-    "于是他把钥匙、残页、干花拆开，散在一楼，把这一夜交给你。便签上写着「不要阅读最后一页」。他怕，也不敢补救。",
-    "最后一页不是毁掉什么。有人把真相看全了，条目才能改写，旧的删除令才会作废。母亲已经没有残响，召不回来。我还有。",
-    "他以为自己在救我。可我只是……再也走不出去。今夜，请你读完。或者合上。",
+${L.mono.map((m) => `    "${m}",`).join("\n")}
   ];
 
   const INTRO = [
-    { speaker: "值夜规程", text: "你是今夜的值夜人。\n\n巡一楼灯火，核还书车，手写借阅卡别乱，黎明前关好门窗。\n这座馆对外接待学者。对内只认编目：目录里有你，你才算还活着。", bg: "library_overview.png", curator: "off" },
-    { speaker: "你", text: "雾气贴着橡木窗。煤油灯还没点齐。馆长约你在大厅见面，说有几句交代。", bg: "library_overview.png", curator: "off" },
-    { speaker: "沃斯馆长", text: "……今夜由你值守。一楼的灯、抽屉、卡片盒，照旧巡一遍。\n我的女儿。外界只说她失踪了十年。你不必打听。馆里的人也不记得清楚。", bg: "floor1_hall.png", curator: "on" },
-    { speaker: "沃斯馆长", text: "地下二层藏着一本书。它已经等了一百年。\n钥匙我拆开了。有些东西，不该再由我亲手碰。\n便签上的话，听或不听，随你。", bg: "floor1_hall.png", curator: "on" },
-    { speaker: "旁白", text: "他戴上帽子，没有回头。大门在雾里合上。\n\n值夜开始。你可以先去值班桌点灯，也可以去阅览廊、还书廊转转。", bg: "floor1_hall.png", curator: "leaving" },
+${L.intro
+  .map(
+    (s) =>
+      `    { speaker: "${s.speaker}", text: "${s.text}", bg: "${s.bg}", curator: "${s.curator}" },`
+  )
+  .join("\n")}
   ];
 
   const EXPLORE_SCENES = ["desk", "stacks", "lobby"];
@@ -89,48 +161,6 @@
 
   const $ = (sel) => document.querySelector(sel);
   const $$ = (sel) => [...document.querySelectorAll(sel)];
-
-  const BGM_SRC = "music/" + encodeURIComponent("Fabrizio Paterlini - Empty Room.mp3");
-  let bgm = null;
-  let bgmMuted = false;
-
-  function syncMusicBtn() {
-    const btn = $("#btn-music");
-    if (!btn) return;
-    const muted = bgmMuted;
-    btn.setAttribute("aria-pressed", muted ? "true" : "false");
-    btn.title = muted ? "开启音乐" : "关闭音乐";
-    btn.setAttribute("aria-label", muted ? "开启音乐" : "关闭音乐");
-  }
-
-  function playBgm() {
-    if (!bgm) {
-      bgm = new Audio(BGM_SRC);
-      bgm.loop = true;
-      bgm.volume = 0.4;
-    }
-    if (bgmMuted) {
-      syncMusicBtn();
-      return;
-    }
-    const p = bgm.play();
-    if (p && typeof p.catch === "function") p.catch(() => {});
-    syncMusicBtn();
-  }
-
-  function toggleBgm() {
-    bgmMuted = !bgmMuted;
-    if (!bgm) {
-      syncMusicBtn();
-      return;
-    }
-    if (bgmMuted) bgm.pause();
-    else {
-      const p = bgm.play();
-      if (p && typeof p.catch === "function") p.catch(() => {});
-    }
-    syncMusicBtn();
-  }
 
   function secretsFound() {
     return Object.values(state.secrets).filter(Boolean).length;
@@ -199,9 +229,9 @@
         "inv-item" + (state.selectedItem === id ? " selected" : "") + (used ? " used" : "");
       btn.dataset.item = id;
       btn.innerHTML =
-        '<span class="inv-thumb" style="background-image:url(\'' +
+        '<span class="inv-thumb" style="background-image:url(\\'' +
         imgUrl(item.img) +
-        '\')"></span><span>' +
+        '\\')"></span><span>' +
         item.name +
         "</span>";
       btn.addEventListener("click", () => {
@@ -210,9 +240,7 @@
         renderInventory();
         toast(
           state.selectedItem
-            ? id === "smallkey" || id === "card"
-              ? "已选中：" + item.name + "。"
-              : "已选中：" + item.name + "（点击插槽放入）"
+            ? "已选中：" + item.name + "（点击插槽放入）"
             : "取消选择"
         );
       });
@@ -293,16 +321,6 @@
     updateDoor();
   }
 
-  function removeItem(id) {
-    state.inventory = state.inventory.filter((x) => x !== id);
-    if (state.selectedItem === id) state.selectedItem = null;
-    renderInventory();
-  }
-
-  function hasSmallKey() {
-    return state.inventory.includes("smallkey");
-  }
-
   function updateDoor() {
     const door = $('[data-id="door"]');
     if (!door) return;
@@ -331,7 +349,7 @@
       showScene("desk");
       setCaption(
         "#desk-caption",
-        "值班桌很暗。"
+        "先点桌上闪动的黄铜钉（煤油灯）。也可以去阅览廊、还书廊搜索。"
       );
       return;
     }
@@ -354,7 +372,7 @@
     if (desk) desk.classList.toggle("lamp-lit", !!on);
   }
 
-  function onFloorHotspot(id, el) {
+  function onFloorHotspot(id) {
     if (id === "lamp") {
       if (state.lampOn) {
         toast("灯已经亮着。");
@@ -363,39 +381,14 @@
       state.lampOn = true;
       setDeskLamp(true);
       $('[data-id="drawer"]').classList.remove("locked");
-      $('[data-id="smallkey"]').classList.remove("locked");
-      $('[data-id="smallkey"]').classList.add("pulse");
       $('[data-id="lamp"]').classList.add("done");
       $('[data-id="lamp"]').classList.remove("pulse");
       openModal({
         title: "煤油灯",
         img: "prop_lamp_on.png",
-        body: "黄铜灯罩里，火舌安静地立起。抽屉看得见了，锁还扣着。\n\n灯油还温着。馆长离开不久。",
+        body: "黄铜灯罩里，火舌安静地立起。\\n值班桌抽屉的轮廓清晰起来。\\n\\n灯油还温着——馆长离开不久。",
         onClose: () =>
-          setCaption("#desk-caption", "抽屉还锁着。"),
-      });
-      return;
-    }
-
-    if (id === "smallkey") {
-      if (!state.lampOn) {
-        toast("太暗了。先点亮煤油灯。");
-        return;
-      }
-      if (hasSmallKey() || state.inventory.includes("key")) {
-        toast("这里已经空了。");
-        return;
-      }
-      openModal({
-        title: "小钥匙",
-        img: "prop_small_key.png",
-        body: "灯座旁边，一枚发暗的小钥匙。",
-        onClose: () => {
-          takeItem("smallkey");
-          setHotspotDone("smallkey");
-          $('[data-id="smallkey"]').classList.remove("pulse");
-          setCaption("#desk-caption", "");
-        },
+          setCaption("#desk-caption", "抽屉可以打开了。便签也在桌面附近。"),
       });
       return;
     }
@@ -409,74 +402,33 @@
         toast("抽屉里已经空了。");
         return;
       }
-      if (!hasSmallKey()) {
-        openModal({
-          title: "值班桌抽屉",
-          body: "锁还扣着。",
-        });
-        return;
-      }
-      if (state.selectedItem !== "smallkey") {
-        toast("先从下方拿起你要试的东西。");
-        return;
-      }
       openModal({
         title: "值班桌抽屉",
         img: "prop_key.png",
-        body: "小钥匙转开了锁。最深处躺着一枚黄铜钥匙，蜡封还在。\n\n他把它留在这里，即便自己读不出那本书里的人。",
+        body: "最深处，一枚黄铜钥匙。蜡印尚未剥落——沃斯家族的纹章。\\n\\n他把它留在这里，即便自己读不出那本书里的人。",
         onClose: () => {
-          removeItem("smallkey");
           takeItem("key");
           setHotspotDone("drawer");
-          setCaption("#desk-caption", "");
+          setCaption("#desk-caption", "钥匙在手。还缺残页与干花——去阅览廊与还书廊看看。");
         },
-      });
-      return;
-    }
-
-    if (id === "miss") {
-      const spine = (el && el.dataset.spine) || "";
-      if (state.selectedItem === "card") {
-        openModal({
-          title: "书架",
-          body: spine
-            ? "书脊上印着 " + spine + "。书脊下方的细槽没有动。"
-            : "书脊下方的细槽没有动。",
-        });
-        return;
-      }
-      openModal({
-        title: "书架",
-        body: spine
-          ? "书脊上印着 " + spine + "。抽不动。书脊下方有一道细槽。"
-          : "抽不动。书脊下方有一道细槽。",
       });
       return;
     }
 
     if (id === "shelf") {
       if (state.inventory.includes("note")) {
-        toast("夹缝里已经空了。");
-        return;
-      }
-      if (state.selectedItem === "card") {
-        openModal({
-          title: "《图书馆管理学》",
-          img: "prop_note.png",
-          body:
-            "书脊上印着 B-17。细槽里的止销退了。夹缝里掉出一张残页。笔迹像是伊洛恩的。\n\nShe is not lost. She has been written into the book.\n她并非失踪。她被写进了书里。\n\n背面还有一行：「写入者读不出自己写进去的人。」",
-          onClose: () => {
-            removeItem("card");
-            takeItem("note");
-            setHotspotDone("shelf");
-            setCaption("#stacks-caption", "");
-          },
-        });
+        toast("这本书的夹缝已经空了。");
         return;
       }
       openModal({
-        title: "书架",
-        body: "书脊上印着 B-17。抽不动。书脊下方有一道细槽。",
+        title: "《图书馆管理学》",
+        img: "prop_note.png",
+        body: "书页夹缝里掉出一张残页。笔迹像是伊洛恩的。\\n\\nShe is not lost. She has been written into the book.\\n她并非失踪。她被写进了书里。\\n\\n背面还有一行：「写入者读不出自己写进去的人。」",
+        onClose: () => {
+          takeItem("note");
+          setHotspotDone("shelf");
+          setCaption("#stacks-caption", "残页在手。借阅卡与墨水也在这一带。");
+        },
       });
       return;
     }
@@ -489,11 +441,11 @@
       openModal({
         title: "遗忘还书车",
         img: "prop_flower.png",
-        body: "一枚野榆干花书签卡在还书缝里。花瓣脆得像旧纸。\n\n这是她生前最爱的花。有人把它留在这里，像在等人把她读回来。",
+        body: "一枚野榆干花书签卡在还书缝里。花瓣脆得像旧纸。\\n\\n这是她生前最爱的花。有人把它留在这里，像在等人把她读回来。",
         onClose: () => {
           takeItem("flower");
           setHotspotDone("cart");
-          setCaption("#lobby-caption", "");
+          setCaption("#lobby-caption", "三件信物集齐后，地下室门会响。");
         },
       });
       return;
@@ -508,9 +460,6 @@
         onClose: () => {
           markSecret(id);
           setHotspotDone(id);
-          if (id === "cards" && !state.inventory.includes("card") && !state.inventory.includes("note")) {
-            takeItem("card");
-          }
         },
       });
       return;
@@ -518,16 +467,16 @@
 
     if (id === "door") {
       if (!hasAllTokens()) {
-        toast("打不开。");
+        toast("门上的锁需要三样东西：钥匙、残页、干花。");
         return;
       }
       openModal({
         title: "包铁橡木门",
-        body: "钥匙咬合。地下的冷气涌上来。\n\n「地下二层藏着一本书，它已经等候了一百年。」\n\n先要经过石阶。",
+        body: "钥匙咬合。地下的冷气涌上来。\\n\\n「地下二层藏着一本书，它已经等候了一百年。」\\n\\n先要经过石阶。",
         onClose: () => {
           showScene("b1");
           $("#b1-text").textContent =
-            "潮湿的石墙。滴水声。远处似乎有人在翻书页——或只是风。\n\n这里没有道具。只有向下的路。";
+            "潮湿的石墙。滴水声。远处似乎有人在翻书页——或只是风。\\n\\n这里没有道具。只有向下的路。";
           setCaption("#b1-caption", "继续下行，到达书室。");
         },
       });
@@ -585,7 +534,10 @@
             state.placedB2[k] = false;
           });
           showScene("bookInner");
-          setCaption("#book-caption", "");
+          setCaption(
+            "#book-caption",
+            "页上有三处空白。信物要放对地方——放错了不会留下。"
+          );
           toast("书页翻开了。你无法再回到一楼。");
         }, 600);
       }
@@ -678,23 +630,22 @@
     if (trueEnd) {
       $("#ending-title").textContent = "真结局 · 被读出来";
       $("#ending-body").textContent =
-        "空白行浮现：伊洛恩·沃斯。剪影走到灯下。借阅卡上的字重新清晰。\n你完成了外人的完整见证——条目被重编，旧删除令作废。\n母亲仍不在任何一页里：已抹除，没有残响可供召回。";
+        "空白行浮现：伊洛恩·沃斯。剪影走到灯下。借阅卡上的字重新清晰。\\n你完成了外人的完整见证——条目被重编，旧删除令作废。\\n母亲仍不在任何一页里：已抹除，没有残响可供召回。";
       $("#ending-epilogue").textContent =
-        "这一夜，终于有人读到了最后一页。\n别再打开禁区的书。自由回来了，但没有无限试错。";
+        "这一夜，终于有人读到了最后一页。\\n别再打开禁区的书。自由回来了，但没有无限试错。";
     } else {
       $("#ending-title").textContent = "主线结局 · 书页之中的人";
       $("#ending-body").textContent =
         "你拼出了真相（见证 " +
         secretsFound() +
-        "/4），却没有读全所有伤痕。\n书页合上。天亮。删除令依旧挂起，伊洛恩仍停在暂存之中。\n母亲的名字仍然召不回来。";
+        "/4），却没有读全所有伤痕。\\n书页合上。天亮。删除令依旧挂起，伊洛恩仍停在暂存之中。\\n母亲的名字仍然召不回来。";
       $("#ending-epilogue").textContent =
-        "有些人并未离去，只是被写进了一本不该被书写的书里。\n理解 ≠ 拯救。";
+        "有些人并未离去，只是被写进了一本不该被书写的书里。\\n理解 ≠ 拯救。";
     }
     showScene("ending");
   }
 
   function newGame() {
-    playBgm();
     state.introIndex = 0;
     state.lampOn = false;
     state.inventory = [];
@@ -707,7 +658,7 @@
     $("#book-slots").style.display = "";
     $$(".hotspot").forEach((h) => {
       h.classList.remove("done", "pulse");
-      if (h.dataset.id === "drawer" || h.dataset.id === "door" || h.dataset.id === "smallkey") h.classList.add("locked");
+      if (h.dataset.id === "drawer" || h.dataset.id === "door") h.classList.add("locked");
       else h.classList.remove("locked");
     });
     const lampPin = $('[data-id="lamp"]');
@@ -719,7 +670,6 @@
 
   function bind() {
     $("#btn-start").addEventListener("click", newGame);
-    $("#btn-music").addEventListener("click", toggleBgm);
     $("#btn-intro-next").addEventListener("click", () => {
       state.introIndex += 1;
       showIntroStep();
@@ -727,11 +677,17 @@
     $("#btn-b1-down").addEventListener("click", () => {
       resetB2Slots();
       showScene("b2");
-      setCaption("#b2-caption", "");
+      setCaption("#b2-caption", "把三件信物放到《未编目之书》上。");
     });
     $("#btn-title").addEventListener("click", () => {
       showScene("title");
       $("#inventory").hidden = true;
+    });
+    $("#btn-reset").addEventListener("click", () => {
+      if (!confirm("清除通关存档？")) return;
+      localStorage.removeItem(STORAGE.cleared);
+      localStorage.removeItem(STORAGE.trueEnding);
+      toast("存档已清除");
     });
     $("#btn-mono-next").addEventListener("click", onMonoNext);
     $("#btn-last-page").addEventListener("click", finishGame);
@@ -745,15 +701,15 @@
         const goto = btn.dataset.goto;
         if (!EXPLORE_SCENES.includes(goto)) return;
         showScene(goto);
-        if (goto === "desk") {
-          let line = "先点煤油灯。";
-          if (state.lampOn && !state.inventory.includes("key") && !state.inventory.includes("smallkey"))
-            line = "抽屉还锁着。";
-          else if (state.inventory.includes("smallkey")) line = "";
-          else if (state.inventory.includes("key")) line = "";
-          setCaption("#desk-caption", line);
-        }
-        if (goto === "stacks") setCaption("#stacks-caption", "");
+        if (goto === "desk")
+          setCaption(
+            "#desk-caption",
+            state.lampOn
+              ? "值班桌。可以回看便签与抽屉。"
+              : "先点煤油灯。"
+          );
+        if (goto === "stacks")
+          setCaption("#stacks-caption", "阅览廊。书架、借阅卡、墨水在这里。");
         if (goto === "lobby")
           setCaption("#lobby-caption", "还书廊。推车、旧相与地下室门。");
       });
@@ -763,12 +719,12 @@
       $$(sel + " .hotspot").forEach((btn) => {
         btn.addEventListener("click", () => {
           if (btn.classList.contains("locked")) {
-            if (btn.dataset.id === "drawer" || btn.dataset.id === "smallkey")
-              toast("太暗了。先点亮煤油灯。");
-            else if (btn.dataset.id === "door") toast("打不开。");
+            if (btn.dataset.id === "drawer") toast("太暗了。先点亮煤油灯。");
+            else if (btn.dataset.id === "door")
+              toast("门上的锁需要三样东西：钥匙、残页、干花。");
             return;
           }
-          onFloorHotspot(btn.dataset.id, btn);
+          onFloorHotspot(btn.dataset.id);
         });
       });
     });
@@ -779,5 +735,8 @@
 
   bind();
   hydrateImages();
-  syncMusicBtn();
 })();
+`;
+
+fs.writeFileSync(path.join(__dirname, "game.js"), out, "utf8");
+console.log("wrote game.js", out.length, "chars");

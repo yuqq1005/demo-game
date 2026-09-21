@@ -6,80 +6,134 @@
   <title>未编目之书 · The Uncatalogued Book</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Noto+Serif+SC:wght@300;400;600&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,500;1,9..144,300&family=Noto+Serif+SC:wght@300;400;500&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
   <div id="app">
     <header class="hud">
-      <div id="stars" class="stars" aria-label="通关标记"></div>
-      <button id="btn-reset" class="ghost-btn" type="button" title="清除存档">重置</button>
+      <button id="btn-music" class="ghost-btn music-btn" type="button" title="关闭音乐" aria-label="关闭音乐" aria-pressed="false">
+        <svg class="icon-sound" viewBox="0 0 24 24" aria-hidden="true">
+          <path fill="currentColor" d="M4 9h3.2L12 5.2v13.6L7.2 15H4V9zm10.2 1.1a3.2 3.2 0 0 1 0 3.8l1.2.9a4.8 4.8 0 0 0 0-5.6l-1.2.9zm2.3-2.2 1.1-.9a7.2 7.2 0 0 1 0 9.9l-1.1-.9a5.6 5.6 0 0 0 0-8.1z"/>
+        </svg>
+        <svg class="icon-mute" viewBox="0 0 24 24" aria-hidden="true">
+          <path fill="currentColor" d="M4 9h3.2L12 5.2v13.6L7.2 15H4V9zm12.1 1.2 1.7 1.8 1.7-1.8 1.1 1.1-1.7 1.7 1.7 1.8-1.1 1.1-1.7-1.8-1.7 1.8-1.1-1.1 1.7-1.8-1.7-1.7 1.1-1.1z"/>
+        </svg>
+      </button>
     </header>
 
-    <!-- 标题 -->
     <section id="scene-title" class="scene active" data-scene="title">
-      <div class="scene-bg" data-img="library_overview.jpg"></div>
+      <div class="scene-bg" data-img="library_overview.png"></div>
       <div class="title-panel">
-        <p class="title-en">The Uncatalogued Book</p>
-        <h1 class="title-zh">未编目之书</h1>
-        <p class="title-tag">沃斯家族私人夜图书馆 · 1928</p>
-        <p class="title-line">地下二层藏着一本书，它已经等候了一百年。</p>
-        <button id="btn-start" class="primary-btn" type="button">开始值夜</button>
-        <p class="title-hint">约 8–12 分钟 · 找物 · 无终局选项</p>
+        <aside class="title-plate">
+          <p class="title-year">一九二八</p>
+          <h1 class="title-zh">未编目之书</h1>
+          <p class="title-en">The Uncatalogued Book</p>
+          <p class="title-line">今夜，你替馆长值守这座夜馆。</p>
+          <button id="btn-start" class="primary-btn title-start" type="button">开始值夜</button>
+        </aside>
       </div>
     </section>
 
-    <!-- 一楼 -->
-    <section id="scene-floor1" class="scene" data-scene="floor1">
-      <div class="scene-bg" data-img="floor1_hall.jpg"></div>
-      <div class="hotspots" id="floor1-hotspots">
-        <button class="hotspot" data-id="lamp" style="left:58%;top:42%" type="button" aria-label="煤油灯">灯</button>
-        <button class="hotspot locked" data-id="drawer" style="left:52%;top:58%" type="button" aria-label="值班桌抽屉">抽屉</button>
-        <button class="hotspot" data-id="shelf" style="left:18%;top:40%" type="button" aria-label="书架">书架</button>
-        <button class="hotspot" data-id="cart" style="left:78%;top:62%" type="button" aria-label="还书车">还书车</button>
-        <button class="hotspot" data-id="cards" style="left:44%;top:52%" type="button" aria-label="借阅卡片盒">卡片</button>
-        <button class="hotspot" data-id="memo" style="left:62%;top:54%" type="button" aria-label="便签">便签</button>
-        <button class="hotspot" data-id="ink" style="left:48%;top:48%" type="button" aria-label="墨水瓶">墨水</button>
-        <button class="hotspot" data-id="photo" style="left:36%;top:56%" type="button" aria-label="旧相纸">相纸</button>
-        <button class="hotspot locked" data-id="door" style="left:88%;top:45%" type="button" aria-label="地下室门">门</button>
+    <section id="scene-intro" class="scene" data-scene="intro">
+      <div class="scene-bg" id="intro-bg" data-img="library_overview.png"></div>
+      <div class="intro-curator" id="intro-curator" data-img="curator_silhouette.png" hidden></div>
+      <div class="dialogue" id="intro-dialogue">
+        <p class="dialogue-speaker" id="intro-speaker"></p>
+        <p class="dialogue-text" id="intro-text"></p>
+        <button id="btn-intro-next" class="primary-btn" type="button">继续</button>
       </div>
-      <p class="scene-caption" id="floor1-caption">夜馆空无一人。先点亮煤油灯。</p>
     </section>
 
-    <!-- 地下书室 -->
+    <section id="scene-desk" class="scene" data-scene="desk">
+      <div class="scene-bg" data-img="floor1_desk.png"></div>
+      <div class="desk-lamp" id="desk-lamp" aria-hidden="true"></div>
+      <div class="room-nav">
+        <span class="room-name">一楼 · 值班桌</span>
+        <button class="ghost-btn room-link" type="button" data-goto="stacks">阅览廊 ></button>
+      </div>
+      <div class="hotspots" id="desk-hotspots">
+        <button class="hotspot pulse" data-id="lamp" style="left:7%;top:60%" type="button" aria-label="煤油灯"></button>
+        <button class="hotspot locked" data-id="smallkey" style="left:16%;top:54%" type="button" aria-label="小钥匙"></button>
+        <button class="hotspot locked" data-id="drawer" style="left:52%;top:82%" type="button" aria-label="值班桌抽屉"></button>
+        <button class="hotspot" data-id="memo" style="left:20%;top:70%" type="button" aria-label="便签"></button>
+      </div>
+      <p class="scene-caption" id="desk-caption"></p>
+    </section>
+
+    <section id="scene-stacks" class="scene" data-scene="stacks">
+      <div class="scene-bg" data-img="floor1_stacks.png" id="stacks-bg"></div>
+      <div class="room-nav">
+        <button class="ghost-btn room-link" type="button" data-goto="desk">< 值班桌</button>
+        <span class="room-name">一楼 · 阅览廊</span>
+        <button class="ghost-btn room-link" type="button" data-goto="lobby">还书廊 ></button>
+      </div>
+      <div class="hotspots" id="stacks-hotspots">
+        <button class="hotspot" data-id="miss" data-spine="C-04" style="left:8%;top:28%" type="button" aria-label="书架"></button>
+        <button class="hotspot" data-id="shelf" style="left:14%;top:42%" type="button" aria-label="书架"></button>
+        <button class="hotspot" data-id="miss" data-spine="A-09" style="left:11%;top:68%" type="button" aria-label="书架"></button>
+        <button class="hotspot" data-id="cards" style="left:38%;top:74%" type="button" aria-label="借阅卡片盒"></button>
+        <button class="hotspot" data-id="ink" style="left:84%;top:72%" type="button" aria-label="墨水瓶"></button>
+      </div>
+      <p class="scene-caption" id="stacks-caption"></p>
+    </section>
+
+    <section id="scene-lobby" class="scene" data-scene="lobby">
+      <div class="scene-bg" data-img="floor1_lobby.png" id="lobby-bg"></div>
+      <div class="lobby-prop lobby-photo" id="lobby-photo" aria-hidden="true"></div>
+      <div class="room-nav">
+        <button class="ghost-btn room-link" type="button" data-goto="stacks">< 阅览廊</button>
+        <span class="room-name">一楼 · 还书廊</span>
+      </div>
+      <div class="hotspots" id="lobby-hotspots">
+        <button class="hotspot" data-id="cart" style="left:38%;top:60%" type="button" aria-label="还书车"></button>
+        <button class="hotspot" data-id="photo" style="left:34%;top:38%" type="button" aria-label="旧相纸"></button>
+        <button class="hotspot locked" data-id="door" style="left:82%;top:40%" type="button" aria-label="地下室门"></button>
+      </div>
+      <p class="scene-caption" id="lobby-caption"></p>
+    </section>
+
+    <section id="scene-b1" class="scene" data-scene="b1">
+      <div class="scene-bg cold" data-img="b1_stairs.png"></div>
+      <div class="b1-panel">
+        <p class="b1-kicker">地下一层 · 石阶</p>
+        <p class="b1-text" id="b1-text"></p>
+        <button id="btn-b1-down" class="primary-btn" type="button">继续下行</button>
+      </div>
+      <p class="scene-caption" id="b1-caption"></p>
+    </section>
+
     <section id="scene-b2" class="scene" data-scene="b2">
-      <div class="scene-bg cold" data-img="b2_vault_room.jpg"></div>
+      <div class="scene-bg cold" data-img="b2_vault_room.png"></div>
       <div class="vault-stage">
-        <div class="book-pedestal" id="blank-book" data-img="blank_book.jpg" title="未编目之书">
+        <div class="book-pedestal" id="blank-book" data-img="blank_book.png" title="未编目之书">
           <span class="book-label">《未编目之书》</span>
         </div>
         <div class="drop-slots" id="b2-slots">
-          <div class="drop-slot" data-slot="key">门 · 放钥匙</div>
-          <div class="drop-slot" data-slot="note">笔 · 放残页</div>
-          <div class="drop-slot" data-slot="flower">脊 · 放干花</div>
+          <div class="drop-slot" data-slot="key">门</div>
+          <div class="drop-slot" data-slot="note">笔</div>
+          <div class="drop-slot" data-slot="flower">脊</div>
         </div>
       </div>
-      <p class="scene-caption" id="b2-caption">把三件信物放到书上。</p>
+      <p class="scene-caption" id="b2-caption"></p>
     </section>
 
-    <!-- 书页内 -->
     <section id="scene-book" class="scene" data-scene="bookInner">
-      <div class="scene-bg parchment" data-img="book_inner.jpg"></div>
-      <div class="silhouette" id="silhouette" hidden data-img="girl_silhouette.jpg"></div>
+      <div class="scene-bg parchment" data-img="book_inner.png"></div>
+      <div class="silhouette" id="silhouette" hidden data-img="girl_silhouette.png"></div>
       <div class="book-slots" id="book-slots">
-        <div class="drop-slot page-slot" data-slot="key">插图【门】</div>
-        <div class="drop-slot page-slot" data-slot="note">插图【鹅毛笔】</div>
-        <div class="drop-slot page-slot" data-slot="flower">插图【少女】</div>
+        <div class="drop-slot page-slot" data-slot="key">门</div>
+        <div class="drop-slot page-slot" data-slot="note">笔</div>
+        <div class="drop-slot page-slot" data-slot="flower">少女</div>
       </div>
       <div class="monologue" id="monologue" hidden>
         <p id="mono-text"></p>
-        <button id="btn-mono-next" class="primary-btn" type="button">……</button>
+        <button id="btn-mono-next" class="primary-btn" type="button">继续</button>
       </div>
       <button id="btn-last-page" class="primary-btn last-page-btn" type="button" hidden>最后一页</button>
-      <p class="scene-caption" id="book-caption">将信物与插图一一对照。</p>
+      <p class="scene-caption" id="book-caption"></p>
     </section>
 
-    <!-- 结局 -->
     <section id="scene-ending" class="scene" data-scene="ending">
       <div class="scene-bg" id="ending-bg"></div>
       <div class="ending-panel">
@@ -90,23 +144,30 @@
       </div>
     </section>
 
-    <!-- 背包 -->
     <aside id="inventory" class="inventory" hidden>
       <p class="inv-label">信物</p>
       <div id="inv-items" class="inv-items"></div>
     </aside>
 
-    <!-- 详情弹窗 -->
     <div id="modal" class="modal" hidden>
-      <div class="modal-card">
-        <div class="modal-art" id="modal-art"></div>
+      <div class="modal-card" id="modal-card">
+        <p class="modal-kicker" id="modal-kicker" hidden></p>
+        <div class="modal-art-wrap" id="modal-art-wrap" hidden>
+          <button class="modal-art" id="modal-art" type="button" aria-label="点击放大" title="点击放大"></button>
+        </div>
         <h3 id="modal-title"></h3>
+        <div class="modal-rule" aria-hidden="true"></div>
         <p id="modal-body"></p>
         <button id="modal-close" class="primary-btn" type="button">合上</button>
       </div>
     </div>
 
-    <!-- 旁白条 -->
+    <div id="art-zoom" class="art-zoom" hidden>
+      <div class="art-zoom-frame">
+        <div class="art-zoom-img" id="art-zoom-img"></div>
+      </div>
+    </div>
+
     <div id="toast" class="toast" hidden></div>
   </div>
   <script src="game.js"></script>
